@@ -521,6 +521,12 @@ typedef void (^SwrveResourcesUpdatedListener) ();
  */
 -(int) purchaseItem:(NSString*)itemName currency:(NSString*)itemCurrency cost:(int)itemCost quantity:(int)itemQuantity;
 
+
+/*! Call this when the user has bought something using real currency.
+ */
+-(int) manualValidatedIap:(SwrveIAPRewards*) rewards localCost:(double) localCost localCurrency:(NSString*) localCurrency productId:(NSString*) productId productIdQuantity:(int) productIdQuantity transactionId:(NSString*) transactionId receipt:(NSString*) receipt;
+
+
 /*! Call this when the user has bought something using real currency.
  *
  * See the REST API docs for the IAP event for a detailed description of the

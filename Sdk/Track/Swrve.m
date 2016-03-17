@@ -940,6 +940,25 @@ static bool didSwizzle = false;
     return true;
 }
 
+-(int) manualValidatedIap:(SwrveIAPRewards*) rewards localCost:(double) localCost localCurrency:(NSString*) localCurrency productId:(NSString*) productId productIdQuantity:(int) productIdQuantity transactionId:(NSString*) transactionId receipt:(NSString*) receipt
+{
+    [self maybeFlushToDisk];
+    NSMutableDictionary* json = [[NSMutableDictionary alloc] init];
+    [json setValue:@"unknown" forKey:@"app_store"];
+    [json setValue:localCurrency forKey:@"local_currency"];
+    [json setValue:[NSNumber numberWithDouble:localCost] forKey:@"cost"];
+    [json setValue:productId forKey:@"product_id"];
+    [json setValue:[NSNumber numberWithInteger:productIdQuantity] forKey:@"quantity"];
+    [json setValue:[rewards rewards] forKey:@"rewards"];    [json setValue:transactionId forKey:@"transaction_id"];    [json setValue:receipt forKey:@"receipt"];
+    [self queueEvent:@"iap" data:json triggerCallback:true];
+    // After IAP event we want to immediately flush the event buffer and update campaigns and resources if necessary
+    if ([self.config autoDownloadCampaignsAndResources]) {
+        [self checkForCampaignAndResourcesUpdates:nil];
+    }
+    
+    return SWRVE_SUCCESS;
+}
+
 -(int) iap:(SKPaymentTransaction*) transaction product:(SKProduct*) product
 {
     return [self iap:transaction product:product rewards:nil];
